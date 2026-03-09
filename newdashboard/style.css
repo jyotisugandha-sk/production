@@ -1,0 +1,1232 @@
+/* === Variables === */
+:root {
+  --sidebar-w: 220px;
+  --header-h: 64px;
+  --edu-navy: #1f2d5a;
+  --edu-blue: #0b66c3;
+  --edu-sky: #e8f1fb;
+
+  --bg: #f3f7fc;
+  --text: var(--edu-navy);
+  --primary: var(--edu-sky);
+  --sidebar-bg: #edf4fb;
+  --card-bg: #ffffff;
+  --muted: #4a5b75;
+  --accent: var(--edu-blue);
+  --header-grad-light: linear-gradient(120deg, #dfeafb 0%, #d0e2f7 48%, #b9d2ee 100%);
+  --header-grad-dark: linear-gradient(130deg, #0f1a2b 0%, #163053 52%, #0f1c2e 100%);
+  --panel-border: #d7e1ef;
+  --card-min-h: 300px;
+  --card-max-h: 520px;
+
+  --transition-fast: 0.25s;
+}
+
+/* dark mode variables */
+body.dark {
+  --bg: #0c121c;
+  --text: #eaf2ff;
+  --primary: #13233a;
+  --sidebar-bg: #101a29;
+  --card-bg: #111b29;
+  --muted: #c7d6ea;
+  --accent: #8fc7ff;
+  --panel-border: rgba(143, 199, 255, 0.28);
+}
+
+/* === Base === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: all var(--transition-fast) ease;
+  font-family: "Poppins", sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(135deg, #e8f1fb, #cfdff3, #b8cde8);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+body.dark {
+  background-color: var(--bg);
+  background-image: radial-gradient(95% 140% at 50% 0%, rgba(40, 63, 95, 0.55) 0%, rgba(12, 18, 28, 1) 62%);
+}
+
+/* === Header === */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  gap: 1rem;
+  background: linear-gradient(120deg, #4a7ecb, #6ea1e6);
+  color: white;
+  box-shadow: 0 5px 14px rgba(20, 46, 90, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  border-bottom: 1px solid rgba(31, 45, 90, 0.12);
+  z-index: 1200;
+  overflow: visible;
+  will-change: background-position;
+}
+
+@keyframes headerBgShift {
+  0% { background-position: 0% 45%; }
+  25% { background-position: 60% 55%; }
+  50% { background-position: 100% 45%; }
+  75% { background-position: 40% 55%; }
+  100% { background-position: 0% 45%; }
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-weight: 700;
+}
+
+.nav-brand img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.brand-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #1f2d5a 0 43%, #0b66c3 43% 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* top nav items (desktop) */
+.nav-items {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  list-style: none;
+  background: transparent;
+}
+
+.nav-items a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 0;
+}
+
+.nav-items a:hover {
+  color: inherit;
+  background: none;
+}
+
+/* dark button */
+#dark-btn {
+  background: none;
+  border: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+  cursor: pointer;
+  padding: .25rem;
+}
+
+/* nav buttons style */
+.nav-items li button {
+  width: auto;
+  padding: 0.2rem 0.1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #000;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 500;
+  position: relative;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.nav-items li button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--edu-blue), var(--edu-navy));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition-fast);
+}
+
+.nav-items li button a {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.nav-items li button:hover {
+  background: transparent;
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.nav-items li button:hover::after,
+.nav-items li button:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.nav-items li button:focus-visible {
+  outline: none;
+  color: var(--accent);
+}
+
+/* menu toggle (mobile) */
+#menu-toggle {
+  display: none;
+  border: none;
+  background: none;
+  font-size: 1.45rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* === Sidebar === */
+.sidebar {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  width: var(--sidebar-w);
+  height: calc(100% - var(--header-h));
+  padding: 1rem;
+  background: transparent;
+  box-shadow: none;
+  border-right: none;
+  z-index: 1100;
+  overflow-y: auto;
+  transform: translateX(0);
+}
+
+.sidebar .logo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-bottom: 1rem;
+}
+
+.sidebar .logo img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.sidebar .logo .logo-title {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0.35rem 0.2rem;
+  margin: 0;
+}
+
+.sidebar li {
+  margin: 0.45rem 0;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  text-decoration: none;
+  color: var(--muted);
+  padding: 0.72rem 0.85rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(238, 244, 251, 0.78));
+  box-shadow: 0 3px 10px rgba(20, 46, 90, 0.06);
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sidebar a i {
+  width: 1.2rem;
+  text-align: center;
+  color: var(--accent);
+  opacity: 0.95;
+}
+
+.sidebar a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #0b66c3, #1f2d5a);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform var(--transition-fast);
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background: linear-gradient(135deg, rgba(233, 242, 253, 0.95), rgba(217, 232, 246, 0.95));
+  border-color: rgba(11, 102, 195, 0.28);
+  color: var(--accent);
+  transform: translateX(3px);
+  box-shadow: 0 8px 18px rgba(11, 102, 195, 0.16);
+}
+
+.sidebar a:hover::before,
+.sidebar a.active::before {
+  transform: scaleY(1);
+}
+
+.sidebar .logout {
+  margin-top: 1.2rem;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 12px;
+}
+
+.sidebar .logout a {
+  background: linear-gradient(135deg, rgba(255, 240, 240, 0.95), rgba(255, 229, 229, 0.92));
+  color: #9f1f1f;
+  border-color: rgba(191, 57, 57, 0.18);
+}
+
+.sidebar .logout a i {
+  color: #b42323;
+}
+
+.sidebar .logout a::before {
+  background: linear-gradient(180deg, #b42323, #7f1d1d);
+}
+
+.sidebar .logout a:hover {
+  background: linear-gradient(135deg, rgba(255, 226, 226, 0.98), rgba(255, 213, 213, 0.96));
+  border-color: rgba(180, 35, 35, 0.28);
+  color: #7f1d1d;
+}
+
+body.dark .sidebar a {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(143, 199, 255, 0.06));
+  border-color: rgba(143, 199, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+body.dark .sidebar a:hover,
+body.dark .sidebar a.active {
+  background: linear-gradient(135deg, rgba(143, 199, 255, 0.16), rgba(143, 199, 255, 0.08));
+  border-color: rgba(143, 199, 255, 0.3);
+  color: #f3f8ff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .sidebar a i {
+  color: #8fc7ff;
+}
+
+body.dark .sidebar .logout a {
+  background: linear-gradient(135deg, rgba(140, 40, 40, 0.35), rgba(95, 23, 23, 0.32));
+  border-color: rgba(255, 137, 137, 0.28);
+  color: #ffd9d9;
+}
+
+body.dark .sidebar .logout a i {
+  color: #ffb0b0;
+}
+
+/* === Main / Grid / Cards === */
+main {
+  margin-top: calc(var(--header-h) + 10px);
+  margin-left: var(--sidebar-w);
+  padding: 1.25rem;
+  padding-bottom: 3rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.card {
+  background: linear-gradient(145deg, #ffffff, #eff3f9);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 1.25rem;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 24px rgba(17, 46, 81, 0.12);
+  min-height: var(--card-min-h);
+}
+
+/* Long-content cards: keep usable height and scroll internally */
+.results-card,
+.assignments-card,
+.notices-card,
+.syllabus-card,
+.attendance-card,
+.bus-card,
+.fee-card,
+.timetable-card,
+.exam-marks-card {
+  max-height: var(--card-max-h);
+  overflow: auto;
+  scrollbar-gutter: stable;
+  margin-bottom: 0.5rem;
+}
+
+.results-card p,
+.assignments-card p,
+.notices-card p,
+.syllabus-card p,
+.attendance-card p,
+.fee-card p,
+.bus-card p,
+.bus-card span {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  margin-bottom: .75rem;
+}
+
+.profile-card {
+  text-align: center;
+}
+
+.profile-card img {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: .75rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 18px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin: .45rem 0;
+}
+
+.progress-fill {
+  height: 100%;
+  line-height: 18px;
+  text-align: right;
+  padding-right: 8px;
+  font-weight: 600;
+  border-radius: 10px;
+  color: var(--text);
+}
+
+/* === Table === */
+table.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(17, 46, 81, 0.1);
+}
+
+table.styled-table th,
+table.styled-table td {
+  padding: .6rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+table.styled-table th {
+  background: rgba(122, 154, 189, 0.18);
+  font-weight: 600;
+}
+
+table.styled-table tr:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+footer {
+  position: relative;
+  z-index: 2;
+  clear: both;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* === Responsive behaviour === */
+@media (max-width: 992px) {
+  main {
+    margin-left: var(--sidebar-w);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 260px;
+  }
+
+  .results-card,
+  .assignments-card,
+  .notices-card,
+  .syllabus-card,
+  .attendance-card,
+  .bus-card,
+  .fee-card,
+  .timetable-card,
+  .exam-marks-card {
+    max-height: 62vh;
+  }
+
+  .timetable-card table,
+  .exam-marks-card table {
+    min-width: 480px;
+  }
+
+  #menu-toggle {
+    display: block;
+  }
+
+  .nav-items {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: var(--header-h);
+    right: 0;
+    padding: .6rem;
+    background: var(--primary);
+    flex-direction: column;
+    gap: .5rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+    z-index: 1250;
+  }
+
+  .nav-items li {
+    width: 100%;
+    margin: 0.2rem 0;
+  }
+
+  .nav-items li button {
+    width: 100%;
+    text-align: left;
+    padding: 0.7rem 0.75rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(122, 154, 189, 0.35);
+    box-shadow: 0 4px 10px rgba(20, 46, 90, 0.12);
+  }
+
+  .nav-items li button a {
+    display: block;
+    width: 100%;
+  }
+
+  .nav-items li button::after {
+    display: none;
+  }
+
+
+  .nav-items.active {
+    display: flex;
+  }
+
+  /* sidebar slides out */
+  .sidebar {
+    transform: translateX(-110%);
+    background: #edf4fb;
+    border-right: 1px solid rgba(122, 154, 189, 0.32);
+    box-shadow: 8px 0 24px rgba(20, 46, 90, 0.2);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar a {
+    background: #ffffff;
+    border: 1px solid rgba(122, 154, 189, 0.28);
+    box-shadow: 0 4px 10px rgba(20, 46, 90, 0.1);
+  }
+
+  .sidebar .logout a {
+    background: #ffeaea;
+    border-color: rgba(180, 35, 35, 0.24);
+  }
+
+  main {
+    margin-left: 0;
+    margin-top: calc(var(--header-h) + 12px);
+    padding: 1rem;
+  }
+}
+
+/* === Dark-mode fixes === */
+.sidebar {
+  background: transparent;
+}
+
+body:not(.dark) header {
+  background: var(--header-grad-light);
+}
+
+body:not(.dark) .sidebar {
+  background: transparent;
+}
+
+/* === Time Table Card === */
+.card.timetable-card {
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.04);
+  width: 100%;
+}
+
+/* Keep timetable aligned with light theme (override old yellow inline style) */
+body:not(.dark) .card.timetable-card {
+  background: linear-gradient(145deg, #ffffff, #eff3f9) !important;
+  color: #1f2d5a !important;
+  border: 1px solid var(--panel-border);
+}
+
+body:not(.dark) .timetable-card h2,
+body:not(.dark) .timetable-card th,
+body:not(.dark) .timetable-card td {
+  color: #1f2d5a !important;
+}
+
+body:not(.dark) .timetable-card table {
+  background: #ffffff !important;
+}
+
+.card.timetable-card h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.timetable-card table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.timetable-card th,
+.timetable-card td {
+  padding: 0.6rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 0.9rem;
+}
+
+.timetable-card th {
+  background: rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+.card.timetable-card {
+  max-height: var(--card-max-h);
+  overflow: auto;
+}
+
+.timetable-card table,
+.exam-marks-card table {
+  min-width: 560px;
+}
+/* Make first column (Time) wider so it doesn’t wrap */
+.timetable-card table th:first-child,
+.timetable-card table td:first-child {
+  min-width: 100px;          /* enough room for "10 AM - 10 AM" */
+  white-space: nowrap;       /* prevent line breaks */
+  text-align: center;        /* keep it centered */
+  font-weight: 300;
+  font-size: 0.95rem;
+}
+
+/* Optional: style dash spacing better */
+.timetable-card table td:first-child {
+  letter-spacing: 0.3px;
+}
+.timetable-card table td:first-child {
+  font-weight: 300;
+  color: var(--accent);
+}
+
+/* Default card look for dark mode */
+/* Default (light mode) cards */
+.card {
+  background: linear-gradient(145deg, #ffffff, #eff3f9); /* light card background */
+  color: #222;                               /* dark text for light mode */
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 24px rgba(17, 46, 81, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+/* Light mode hover effect */
+.card:hover {
+  transform: translateY(-6px);
+  background: linear-gradient(145deg, #ffffff, #e8f0fb); /* slightly lighter */
+  box-shadow: 0 12px 28px rgba(17, 46, 81, 0.2),
+              0 0 12px rgba(11, 102, 195, 0.14);
+}
+
+/* === DARK MODE OVERRIDES ===
+   When <body> has class "dark" */
+body.dark .card {
+  background: linear-gradient(150deg, #111b29 0%, #0f1824 100%); /* dark background */
+  color: #f5f8ff;                             /* light text */
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.36);
+}
+
+body.dark .card:hover {
+  background: linear-gradient(150deg, #162234 0%, #111b2a 100%); /* slightly lighter dark */
+  box-shadow: 0 12px 24px rgba(0,0,0,0.48),
+              0 0 12px rgba(143,199,255,0.2); /* blue glow for dark mode */
+}
+
+body.dark header {
+  background: var(--header-grad-dark);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(143, 199, 255, 0.1);
+  border-bottom-color: rgba(143, 199, 255, 0.18);
+}
+
+body.dark .nav-items li button {
+  background: transparent;
+  color: #d9e6f7;
+}
+
+body.dark .nav-items li button a {
+  color: #d9e6f7 !important;
+}
+
+body.dark .nav-items li button::after {
+  background: linear-gradient(90deg, #d9e6f7, #ffffff);
+}
+
+body.dark .brand-title {
+  background: linear-gradient(90deg, #d9e6f7 0 43%, #8fc7ff 43% 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+
+body.dark .nav-items li button:hover,
+body.dark .nav-items li button:focus-visible {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  body.dark .nav-items li button {
+    background: rgba(23, 35, 54, 0.92);
+    border: 1px solid rgba(143, 199, 255, 0.24);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  }
+
+  body.dark .sidebar {
+    background: #101a29;
+    border-right-color: rgba(143, 199, 255, 0.28);
+    box-shadow: 10px 0 26px rgba(0, 0, 0, 0.42);
+  }
+
+  body.dark .sidebar a {
+    background: #162234;
+    border-color: rgba(143, 199, 255, 0.26);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  body.dark .sidebar .logout a {
+    background: rgba(95, 23, 23, 0.65);
+    border-color: rgba(255, 137, 137, 0.3);
+  }
+}
+
+body.dark table.styled-table th {
+  background: rgba(143, 199, 255, 0.1);
+}
+
+body.dark table.styled-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Fix: timetable readability in dark mode */
+body.dark .card.timetable-card {
+  background: linear-gradient(150deg, #111b29 0%, #0f1824 100%) !important;
+  color: #eaf2ff !important;
+  border: 1px solid rgba(143, 199, 255, 0.24);
+}
+
+body.dark .timetable-card h2,
+body.dark .timetable-card th,
+body.dark .timetable-card td {
+  color: #eaf2ff !important;
+}
+
+body.dark .timetable-card table {
+  background: #121d2d !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+body.dark .timetable-card th {
+  background: rgba(143, 199, 255, 0.14) !important;
+  border-bottom: 1px solid rgba(143, 199, 255, 0.22);
+}
+
+body.dark .timetable-card td {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Force Bootstrap modals to stay hidden by default */
+
+/* Ensure modal appears above everything */
+.modal-backdrop.show {
+  z-index: 1050 !important;
+}
+
+.modal {
+  z-index: 3000 !important;   /* Above Tailwind layers */
+  display: none;
+}
+
+/* Show modal when active */
+.modal.show {
+  display: block !important;
+}
+
+/* Small, centered modal */
+.modal-dialog {
+  max-width: 500px;           /* smaller width */
+  margin: 1.5rem auto;        /* center with some spacing from top/bottom */
+}
+
+.modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Scroll modal body only if needed */
+.modal-body {
+  max-height: calc(100vh - 200px); /* prevents modal from going off-screen */
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+}
+
+/* Modal header/footer spacing */
+.modal-header,
+.modal-footer {
+  padding: 0.75rem 1.25rem;
+}
+
+/* Optional: dark mode modal fix */
+body.dark .modal-content {
+  background-color: #1e1e2f !important;
+  color: #f5f5f5 !important;
+}
+
+/* Optional: adjust buttons for small modal */
+.modal-footer .btn {
+  flex: 1;
+  margin: 0 0.25rem;
+}
+
+/* --- Dashboard layout matching reference image --- */
+.dashboard-grid {
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1rem;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, #173c74, #2f63a9);
+  z-index: 1300;
+}
+
+.dashboard-grid > .card {
+  background: #e9edf2;
+  border: 1px solid #d5dce6;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(23, 46, 79, 0.08);
+  height: 340px;
+  min-height: 340px;
+  max-height: 340px;
+  overflow: auto;
+}
+
+.profile-card {
+  text-align: center;
+}
+
+.profile-card h2,
+.attendance-card h2,
+.assignments-card h2,
+.timetable-card h2,
+.notices-card h2,
+.exam-marks-card h2,
+.fee-card h2,
+.results-card h2,
+.bus-card h2,
+.syllabus-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #102a4c;
+  margin-bottom: 1rem;
+}
+
+.profile-name {
+  font-size: 2.35rem;
+  font-weight: 700;
+  color: #102a4c;
+  margin-bottom: 0.7rem;
+}
+
+.profile-card .profile-icon-img {
+  width: 148px;
+  height: 148px;
+  border: 3px solid #d4dae2;
+  margin: 0 auto 1rem;
+}
+
+.profile-card .lower-section-content {
+  font-size: 1.18rem;
+  line-height: 1.65;
+  color: #15345d;
+}
+
+.card-link-btn,
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  text-decoration: none;
+  color: #1e4f8f;
+  font-weight: 600;
+}
+
+.card-link-btn {
+  width: 100%;
+  justify-content: center;
+  background: #dbe1e9;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+}
+
+.notices-card .card-link,
+.assignments-card .card-link,
+.attendance-card .card-link {
+  float: right;
+}
+
+.assignments-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.assignments-card .assignment-item {
+  border-radius: 14px;
+}
+
+#busDetailsContainer p {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid #d2dae6;
+  padding: 0.45rem 0;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card h2,
+  .attendance-card h2,
+  .assignments-card h2,
+  .timetable-card h2,
+  .notices-card h2,
+  .exam-marks-card h2,
+  .fee-card h2,
+  .results-card h2,
+  .bus-card h2,
+  .syllabus-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .profile-name {
+    font-size: 1.85rem;
+  }
+}
+
+/* Dark mode readability + interaction for dashboard cards */
+body.dark .dashboard-grid > .card {
+  background: linear-gradient(155deg, #1a2434 0%, #121a27 100%);
+  border-color: rgba(143, 199, 255, 0.28);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.42);
+}
+
+body.dark .dashboard-grid > .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(143, 199, 255, 0.2);
+}
+
+body.dark .profile-card h2,
+body.dark .attendance-card h2,
+body.dark .assignments-card h2,
+body.dark .timetable-card h2,
+body.dark .notices-card h2,
+body.dark .exam-marks-card h2,
+body.dark .fee-card h2,
+body.dark .results-card h2,
+body.dark .bus-card h2,
+body.dark .syllabus-card h2,
+body.dark .profile-name {
+  color: #f2f7ff;
+}
+
+body.dark .dashboard-grid > .card p,
+body.dark .dashboard-grid > .card li,
+body.dark .dashboard-grid > .card span,
+body.dark .dashboard-grid > .card strong,
+body.dark .dashboard-grid > .card label,
+body.dark .dashboard-grid > .card .text-muted {
+  color: #d4dfef !important;
+}
+
+body.dark .dashboard-grid > .card .badge {
+  color: #fff !important;
+}
+
+body.dark #busDetailsContainer p {
+  border-bottom-color: rgba(143, 199, 255, 0.24);
+}
+
+body.dark .card-link-btn,
+body.dark .card-link {
+  color: #b9d8ff;
+}
+
+body.dark .card-link-btn {
+  background: rgba(143, 199, 255, 0.14);
+  border: 1px solid rgba(143, 199, 255, 0.25);
+}
+
+body.dark .card-link-btn:hover,
+body.dark .card-link:hover {
+  color: #ffffff;
+  filter: brightness(1.08);
+}
+
+body.dark .styled-table {
+  background: #162133;
+  border: 1px solid rgba(143, 199, 255, 0.2);
+}
+
+body.dark .styled-table th {
+  background: rgba(143, 199, 255, 0.18) !important;
+  color: #f0f6ff !important;
+}
+
+body.dark .styled-table td {
+  color: #d8e4f6 !important;
+  border-bottom-color: rgba(143, 199, 255, 0.16) !important;
+}
+
+body.dark .styled-table tr:hover td {
+  background: rgba(143, 199, 255, 0.08);
+}
+
+body.dark .assignments-card .assignment-item {
+  border-color: rgba(143, 199, 255, 0.35) !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.32);
+}
+
+/* === Final responsive overrides === */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-w: 200px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  header {
+    padding: 0 0.9rem;
+  }
+
+  main {
+    padding: 1rem;
+  }
+
+  .dashboard-grid > .card {
+    height: auto;
+    min-height: 280px;
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-w: 220px;
+  }
+
+  header {
+    padding: 0 0.75rem;
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  main {
+    margin-left: 0;
+    width: 100%;
+    padding: 0.85rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .dashboard-grid > .card {
+    border-radius: 14px;
+    height: auto;
+    min-height: 240px;
+    max-height: none;
+  }
+
+  .profile-name {
+    font-size: 1.55rem;
+  }
+
+  .profile-card .profile-icon-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .profile-card .lower-section-content {
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .timetable-card table,
+  .exam-marks-card table {
+    min-width: 100% !important;
+  }
+
+  .styled-table th,
+  .styled-table td,
+  .timetable-card th,
+  .timetable-card td {
+    font-size: 0.84rem;
+    padding: 0.48rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --header-h: 58px;
+  }
+
+  header {
+    gap: 0.5rem;
+  }
+
+  .nav-brand {
+    gap: 0.4rem;
+  }
+
+  .nav-brand img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .brand-title {
+    font-size: 0.85rem;
+  }
+
+  #dark-btn {
+    font-size: 1rem;
+  }
+
+  .dashboard-grid > .card {
+    min-height: 220px;
+    padding: 0.8rem;
+  }
+
+  .profile-card .profile-icon-img {
+    width: 95px;
+    height: 95px;
+  }
+
+  .profile-name {
+    font-size: 1.35rem;
+  }
+}
+
+
+
+

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student | Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+  .nav-items li a {
+    position: relative;
+    padding: 6px 10px;
+    transition: color 0.3s;
+  }
+  .nav-items li a.active {
+    color: #2563eb; /* Tailwind blue-600 */
+  }
+  .nav-items li a.active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: #2563eb;
+    border-radius: 2px;
+  }
+</style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+      <div class="nav-brand">
+        <img src="logo.png" alt="logo">
+        <div class="brand-title">Student Dashboard</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <button id="menu-toggle" aria-label="Open menu"><i class="bi bi-list"></i></button>
+        <nav>
+          <ul class="nav-items" id="topNav">
+            <li><button><a href="/student/dashboard">Home</a></button></li>
+            <li><button>Time Table</button></li>
+            <li><button>Exams</button></li>
+            <li><button>Password</button></li>
+            <li><button><a href="/login">Logout</a></button></li>
+          </ul>
+        </nav>
+        <button id="dark-btn" aria-pressed="false" title="Toggle dark mode"><i class="bi bi-moon-stars-fill"></i></button>
+      </div>
+    </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <ul>
+      <li><a href="/student/dashboard"><i class="bi bi-house-fill"></i> Dashboard</a></li>
+      <li><a href="/students/profile-details"><i class="bi bi-person-fill"></i> Profile</a></li>
+      <li><a href="/students/attendence"><i class="bi bi-list-check"></i> Attendance</a></li>
+      <li><a href="/students/assignment"><i class="bi bi-journal-text"></i> Assignments</a></li>
+      <li><a href="/students/exam"><i class="bi bi-clipboard-check"></i> Exams</a></li>
+      <li><a href="/students/fee"><i class="bi bi-book"></i> Fees</a></li>
+	  <li><a href="/students/bus"><i class="bi bi-bus-front"></i> Bus</a></li>
+      <li><a href="/students/setting"><i class="bi bi-gear-fill"></i> Settings</a></li>
+	  
+      <li class="logout"><a href="/login"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="dashboard-grid" id="home">
+      <div class="card profile-card">
+        <h2><i class="bi bi-person-badge"></i> My Profile</h2>
+        <img src="assets/icon1.png" alt="profile" class="profile-icon-img">
+        <h3 class="profile-name"><span class="profile-span">Student</span></h3>
+        <div class="lower-section-content">
+          <p><strong>Roll No:</strong> <span class="roll-number">XXXX</span></p>
+          <p><strong>Class:</strong> <span class="class-name">XX Year</span></p>
+          <p><strong>Section:</strong> <span class="section-name">X</span></p>
+          <p><strong>Contact:</strong> <span class="phone-number">XXXXX-XXXXX</span></p>
+          <p><strong>Email:</strong> <span class="email-id">XXX@gmail.com</span></p>
+        </div>
+        <a href="/students/profile-details" class="card-link-btn">View Profile</a>
+      </div>
+
+      <div class="card attendance-card">
+        <h2><i class="bi bi-check2-square"></i> Attendance</h2>
+      </div>
+
+      <div class="card assignments-card">
+        <h2><i class="bi bi-journal-text"></i> Assignments</h2>
+      </div>
+
+      <div id="timetable" class="card timetable-card">
+        <h2><i class="bi bi-table"></i> Today's Timetable</h2>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Subject</th>
+              <th>Teacher</th>
+            </tr>
+          </thead>
+          <tbody id="timetable-body">
+            <!-- JS will insert rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card notices-card">
+        <h2><i class="bi bi-bell-fill"></i> Notices</h2>
+      </div>
+
+      <div class="card exam-marks-card">
+        <h2><i class="bi bi-clipboard-data"></i> Exam Marks</h2>
+      </div>
+
+      <div id="results" class="card results-card p-3">
+        <h2><i class="bi bi-journal-richtext"></i> Notes</h2>
+        <!-- JS will populate cards here -->
+      </div>
+
+      <div id="fees" class="card fee-card">
+        <h2><i class="bi bi-cash-stack"></i> Fee Status</h2>
+        <canvas id="feeChart" height="140"></canvas>
+        <p id="feeSummary">Loading...</p>
+      </div>
+
+      <div class="card syllabus-card">
+        <h2><i class="bi bi-book-half"></i> Syllabus</h2>
+      </div>
+
+      <div id="busCard" class="card bus-card">
+        <h2><i class="bi bi-bus-front"></i> Bus Details</h2>
+        <div id="busDetailsContainer">
+          <p><strong>Bus Number:</strong> <span id="busNumber">_ _ _</span></p>
+          <p><strong>Bus Name:</strong> <span id="busRoute">_ _ _</span></p>
+          <p><strong>Pickup Point:</strong> <span id="pickupPoint">_ _ _</span></p>
+          <p><strong>Driver Name:</strong> <span id="driverName">_ _ _</span></p>
+          <p><strong>Driver Contact:</strong> <span id="driverContact">_ _ _</span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>&copy; 2025 Student Dashboard | Built with ❤️</footer>
+
+<script>
+  // Elements
+  const menuToggle = document.getElementById('menu-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const topNav = document.getElementById('topNav');
+  const darkBtn = document.getElementById('dark-btn');
+
+  // ===== MOBILE SIDEBAR TOGGLE =====
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (window.innerWidth <= 768) sidebar.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (ev) => {
+    if (window.innerWidth <= 768) {
+      if (!sidebar.contains(ev.target) && !menuToggle.contains(ev.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+
+  // ===== DARK MODE =====
+  darkBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    darkBtn.setAttribute('aria-pressed', document.body.classList.contains('dark') ? 'true' : 'false');
+    keepLightCards();
+  });
+
+  // ===== KEEP CARD STYLES CSS-DRIVEN =====
+  function keepLightCards() {}
+  keepLightCards();
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) sidebar.classList.remove('open');
+  });
+
+  // ===== ACTIVE NAV ITEM ON SCROLL =====
+  const navLinks = document.querySelectorAll('#topNav a[href^="#"]');
+  const sections = Array.from(navLinks).map(link => document.querySelector(link.getAttribute('href')));
+
+  function setActiveLink() {
+    let scrollPos = window.scrollY + 120;
+    sections.forEach((section, index) => {
+      if (!section) return;
+      if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        navLinks[index].classList.add('active');
+      }
+    });
+  }
+  window.addEventListener('scroll', setActiveLink);
+
+  // ===== ACTIVE ON CLICK =====
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+</script>
+
+<script src="student-dashboard.js"></script>
+</body>
+</html>
+
