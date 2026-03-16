@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Student Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+
+<script>
+tailwind.config={darkMode:"class"}
+</script>
+
+<style>
+
+/* BODY */
+
+body{
+background:#ffffff;
+transition:.4s;
+}
+
+.dark body{
+background:#020617;
+}
+
+/* MESH BACKGROUND */
+
+.mesh-bg{
+position:fixed;
+inset:0;
+z-index:-3;
+
+background:
+radial-gradient(circle at 10% 20%, rgba(200,220,255,0.8), transparent 40%),
+radial-gradient(circle at 80% 30%, rgba(220,230,255,0.8), transparent 40%),
+radial-gradient(circle at 40% 80%, rgba(200,255,255,0.8), transparent 40%);
+
+animation:meshMove 16s linear infinite;
+}
+
+@keyframes meshMove{
+
+0%{transform:rotate(0deg) scale(1)}
+
+50%{transform:rotate(180deg) scale(1.2)}
+
+100%{transform:rotate(360deg) scale(1)}
+
+}
+
+/* FLOATING BLOBS */
+
+.aurora-bg{
+position:fixed;
+inset:0;
+z-index:-2;
+overflow:hidden;
+}
+
+.blob{
+position:absolute;
+width:500px;
+height:500px;
+border-radius:50%;
+filter:blur(120px);
+opacity:.7;
+animation:floatBlob 20s infinite alternate ease-in-out;
+}
+
+.blob1{
+background:#dbeafe;
+top:-150px;
+left:-150px;
+}
+
+.blob2{
+background:#e0f2fe;
+bottom:-150px;
+right:-150px;
+animation-duration:24s;
+}
+
+.blob3{
+background:#ecfeff;
+top:40%;
+left:40%;
+animation-duration:28s;
+}
+
+.dark .blob1{
+background:#2563eb;
+}
+
+.dark .blob2{
+background:#7c3aed;
+}
+
+.dark .blob3{
+background:#06b6d4;
+}
+
+@keyframes floatBlob{
+
+0%{transform:translate(0,0) scale(1)}
+50%{transform:translate(120px,-100px) scale(1.3)}
+100%{transform:translate(-80px,100px) scale(1.1)}
+
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+inset:0;
+z-index:-1;
+}
+
+/* CURSOR GLOW */
+
+#cursorGlow{
+position:fixed;
+width:260px;
+height:260px;
+border-radius:50%;
+background:radial-gradient(circle,
+rgba(255,255,255,.9),
+transparent 70%);
+pointer-events:none;
+transform:translate(-50%,-50%);
+z-index:0;
+transition:.1s;
+}
+
+.dark #cursorGlow{
+background:radial-gradient(circle,
+rgba(99,102,241,.6),
+transparent 70%);
+}
+
+/* GLASS CARDS */
+
+.card{
+background:rgba(255,255,255,.7);
+backdrop-filter:blur(18px);
+border-radius:18px;
+padding:22px;
+box-shadow:0 10px 40px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.dark .card{
+background:rgba(30,41,59,.6);
+}
+
+.card:hover{
+transform:translateY(-6px) scale(1.02);
+}
+
+/* PROGRESS */
+
+.progress{
+height:10px;
+border-radius:20px;
+background:#e5e7eb;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+background:#3b82f6;
+transition:1s;
+}
+
+/* SCROLL ANIMATION */
+
+.reveal{
+opacity:0;
+transform:translateY(40px);
+transition:1s;
+}
+
+.reveal.active{
+opacity:1;
+transform:translateY(0);
+}
+
+@media(max-width:768px){
+
+.card{padding:16px}
+h2{font-size:20px}
+
+}
+
+</style>
+
+</head>
+
+<body class="text-gray-800 dark:text-gray-200">
+
+<div class="mesh-bg"></div>
+
+<div class="aurora-bg">
+<span class="blob blob1"></span>
+<span class="blob blob2"></span>
+<span class="blob blob3"></span>
+</div>
+
+<div id="particles-js"></div>
+
+<div id="cursorGlow"></div>
+
+<header class="bg-white/70 dark:bg-gray-800/70 backdrop-blur shadow sticky top-0 z-40">
+
+<div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+
+<h1 class="font-bold flex items-center gap-2">
+<i class="bi bi-mortarboard text-blue-600"></i>
+Student Dashboard
+</h1>
+
+<div class="flex gap-3">
+
+<button onclick="printResult()" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
+<i class="bi bi-printer"></i>
+</button>
+
+<button onclick="toggleDark()" class="text-xl">
+<i class="bi bi-moon-stars"></i>
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+<main class="max-w-6xl mx-auto p-4 space-y-6">
+
+<section class="card reveal flex flex-col md:flex-row md:justify-between">
+
+<div>
+<h2 class="text-2xl font-bold">Mustak Khan</h2>
+<p class="text-sm text-gray-500">Roll No: S123535</p>
+<p class="text-sm text-gray-500">2nd Year • Section C</p>
+</div>
+
+<div class="text-right">
+<div class="text-2xl font-bold text-blue-600" id="percentage"></div>
+<div>Grade: <span id="grade"></span></div>
+<div class="text-green-600 font-semibold">🏆 Rank: 5</div>
+</div>
+
+</section>
+
+<section id="quickMarks"
+class="grid grid-cols-2 md:grid-cols-5 gap-4 reveal"></section>
+
+<section class="card reveal">
+
+<h2 class="font-semibold mb-4">Subject Results</h2>
+
+<table class="w-full text-sm">
+
+<thead class="border-b dark:border-gray-700">
+
+<tr>
+<th class="text-left py-2">Subject</th>
+<th class="text-center">Marks</th>
+<th class="text-center">Grade</th>
+<th class="text-center">Status</th>
+</tr>
+
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+</section>
+
+<section class="card reveal">
+
+<h2 class="font-semibold mb-4">Performance</h2>
+
+<div id="progressArea" class="space-y-4"></div>
+
+</section>
+
+<section class="grid grid-cols-1 md:grid-cols-2 gap-4 reveal">
+
+<div class="card">
+<canvas id="barChart"></canvas>
+</div>
+
+<div class="card">
+<canvas id="radarChart"></canvas>
+</div>
+
+<div class="card md:col-span-2">
+<canvas id="pieChart"></canvas>
+</div>
+
+</section>
+
+</main>
+
+<footer class="text-center py-4 text-sm text-gray-500">
+© Student ERP
+</footer>
+
+<script>
+
+/* PARTICLES */
+
+function loadParticles(){
+
+let dark=document.documentElement.classList.contains("dark")
+
+particlesJS("particles-js",{
+
+particles:{
+
+number:{value:90},
+
+color:{value: dark ? "#ffffff" : "#3b82f6"},
+
+size:{value:3,random:true},
+
+move:{speed:1},
+
+opacity:{value:.9},
+
+line_linked:{
+enable:true,
+distance:130,
+color: dark ? "#ffffff" : "#3b82f6",
+opacity:.6
+}
+
+}
+
+})
+
+}
+
+loadParticles()
+
+/* CURSOR GLOW */
+
+const glow=document.getElementById("cursorGlow")
+
+document.addEventListener("mousemove",(e)=>{
+glow.style.left=e.clientX+"px"
+glow.style.top=e.clientY+"px"
+})
+
+/* SUBJECT DATA */
+
+const subjects=[
+{name:"Mathematics",marks:85},
+{name:"Science",marks:78},
+{name:"English",marks:90},
+{name:"Computer",marks:88},
+{name:"History",marks:76}
+]
+
+function grade(m){
+if(m>=90)return"A+"
+if(m>=80)return"A"
+if(m>=70)return"B"
+if(m>=60)return"C"
+if(m>=50)return"D"
+return"F"
+}
+
+function status(m){
+return m>=35?"Pass":"Fail"
+}
+
+const table=document.getElementById("table")
+const quick=document.getElementById("quickMarks")
+const progress=document.getElementById("progressArea")
+
+let total=0
+
+subjects.forEach(s=>{
+
+total+=s.marks
+
+table.innerHTML+=`
+<tr class="border-b dark:border-gray-700">
+<td>${s.name}</td>
+<td class="text-center">${s.marks}</td>
+<td class="text-center">${grade(s.marks)}</td>
+<td class="text-center ${status(s.marks)=="Pass"?"text-green-600":"text-red-600"}">${status(s.marks)}</td>
+</tr>
+`
+
+quick.innerHTML+=`
+<div class="card text-center">
+<div class="text-sm">${s.name}</div>
+<div class="text-xl font-bold text-blue-600">${s.marks}</div>
+</div>
+`
+
+progress.innerHTML+=`
+<div>
+<div class="flex justify-between text-sm mb-1">
+<span>${s.name}</span>
+<span>${s.marks}%</span>
+</div>
+<div class="progress">
+<div class="progress-bar" style="width:${s.marks}%"></div>
+</div>
+</div>
+`
+
+})
+
+let percentage=(total/subjects.length).toFixed(2)
+
+document.getElementById("percentage").innerText=percentage+"%"
+document.getElementById("grade").innerText=grade(percentage)
+
+/* CHARTS */
+
+new Chart(barChart,{
+type:"bar",
+data:{
+labels:subjects.map(s=>s.name),
+datasets:[{data:subjects.map(s=>s.marks)}]
+},
+options:{plugins:{legend:{display:false}}}
+})
+
+new Chart(radarChart,{
+type:"radar",
+data:{
+labels:subjects.map(s=>s.name),
+datasets:[{data:subjects.map(s=>s.marks)}]
+}
+})
+
+new Chart(pieChart,{
+type:"doughnut",
+data:{
+labels:subjects.map(s=>s.name),
+datasets:[{data:subjects.map(s=>s.marks)}]
+}
+})
+
+function toggleDark(){
+
+document.documentElement.classList.toggle("dark")
+
+document.getElementById("particles-js").innerHTML=""
+
+loadParticles()
+
+}
+
+const observer=new IntersectionObserver(entries=>{
+entries.forEach(e=>{
+if(e.isIntersecting)e.target.classList.add("active")
+})
+})
+
+document.querySelectorAll(".reveal").forEach(el=>{
+observer.observe(el)
+})
+
+function printResult(){
+window.print()
+}
+
+</script>
+
+</body>
+</html>

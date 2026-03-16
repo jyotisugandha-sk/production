@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student | Assignment Details</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+	card-hover:hover {
+	  transform: translateY(-4px);
+	  transition: all 0.2s ease-in-out;
+	  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+	}
+
+  body {
+    background-color: #eef4ff;
+  }
+
+  main.container {
+    max-width: 1040px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  main.container::before {
+    content: "";
+    position: absolute;
+    inset: 30px 10% auto auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.18), transparent 68%);
+    pointer-events: none;
+    filter: blur(6px);
+  }
+
+  .assignment-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 28px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(241, 247, 255, 0.92));
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+  }
+
+  .assignment-container {
+    transition: all 0.3s ease;
+  }
+
+  .assignment-container:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .assignment-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 5px;
+    background: linear-gradient(90deg, #2563eb, #38bdf8, #60a5fa);
+  }
+
+  body.dark .assignment-card {
+    background: linear-gradient(160deg, rgba(15, 23, 42, 0.94), rgba(25, 39, 63, 0.92));
+    border-color: rgba(96, 165, 250, 0.18);
+    box-shadow: 0 28px 70px rgba(2, 8, 23, 0.45);
+  }
+
+  .assignment-title {
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+  }
+
+  body.dark .assignment-title {
+    color: #f8fafc;
+  }
+
+  .assignment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1.8rem;
+  }
+
+  @keyframes metaChipReveal {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .assignment-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    color: #334155;
+    animation: metaChipReveal 0.45s ease-out both;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+
+  .assignment-meta > span:hover {
+    transform: translateY(-3px);
+    border-color: rgba(59, 130, 246, 0.28);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.12);
+  }
+
+  .assignment-meta > span strong {
+    color: #0f172a;
+  }
+
+  .assignment-meta > span span {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+  }
+
+  .assignment-meta i {
+    margin-right: 0.5rem;
+    color: #2563eb;
+    font-size: 0.95rem;
+  }
+
+  .assignment-meta > span:nth-child(1) i {
+    color: #2563eb;
+    animation-delay: 0.04s;
+  }
+
+  .assignment-meta > span:nth-child(2) i {
+    color: #7c3aed;
+    animation-delay: 0.12s;
+  }
+
+  .assignment-meta > span:nth-child(3) i {
+    color: #ea580c;
+    animation-delay: 0.2s;
+  }
+
+  .assignment-meta > span:nth-child(1) {
+    animation-delay: 0.04s;
+  }
+
+  .assignment-meta > span:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  .assignment-meta > span:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  .nav-brand img {
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+  }
+
+  .brand-title {
+    background: linear-gradient(90deg, #ffffff 0%, #dbeafe 48%, #bfdbfe 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  body.dark .assignment-meta > span {
+    background: rgba(15, 23, 42, 0.56);
+    border-color: rgba(96, 165, 250, 0.14);
+    box-shadow: none;
+    color: #cbd5e1;
+  }
+
+  body.dark .assignment-meta > span strong {
+    color: #f8fafc;
+  }
+
+  body.dark .assignment-meta i {
+    color: #93c5fd;
+  }
+
+  body.dark .assignment-meta > span:nth-child(1) i {
+    color: #93c5fd;
+  }
+
+  body.dark .assignment-meta > span:nth-child(2) i {
+    color: #c4b5fd;
+  }
+
+  body.dark .assignment-meta > span:nth-child(3) i {
+    color: #fdba74;
+  }
+
+  body.dark .assignment-meta > span:hover {
+    border-color: rgba(96, 165, 250, 0.3);
+    box-shadow: 0 14px 28px rgba(2, 8, 23, 0.28);
+  }
+
+  body.dark .nav-brand img {
+    border-color: rgba(147, 197, 253, 0.5);
+    box-shadow: 0 10px 22px rgba(2, 8, 23, 0.45);
+  }
+
+  body.dark .brand-title {
+    background: linear-gradient(90deg, #f8fafc 0%, #bfdbfe 45%, #93c5fd 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .assignment-description-section,
+  .assignment-submit-section {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: rgba(226, 232, 240, 0.95);
+    padding-top: 1.4rem;
+  }
+
+  body.dark .assignment-description-section,
+  body.dark .assignment-submit-section {
+    border-top-color: rgba(71, 85, 105, 0.6);
+  }
+
+  .assignment-description-section {
+    margin-bottom: 1.7rem;
+  }
+
+  @keyframes descriptionReveal {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .section-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.9rem;
+    color: #0f172a;
+  }
+
+  body.dark .section-heading {
+    color: #f1f5f9;
+  }
+
+  .assignment-description {
+    min-height: 110px;
+    padding: 1.1rem 1.15rem;
+    border-radius: 20px;
+    background: rgba(248, 250, 252, 0.92);
+    border: 1px solid rgba(51, 65, 85, 0.34);
+    outline: 1px solid rgba(148, 163, 184, 0.26);
+    outline-offset: -6px;
+    line-height: 1.85;
+    color: #475569;
+    white-space: pre-wrap;
+    animation: descriptionReveal 0.55s ease-out;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    transform-origin: center top;
+  }
+
+  .assignment-description:hover {
+    transform: translateY(-2px);
+    border-color: rgba(30, 41, 59, 0.52);
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  body.dark .assignment-description {
+    background: rgba(15, 23, 42, 0.54);
+    border-color: rgba(15, 23, 42, 0.92);
+    outline-color: rgba(51, 65, 85, 0.72);
+    color: #cbd5e1;
+    box-shadow: none;
+  }
+
+  body.dark .assignment-description:hover {
+    border-color: rgba(2, 6, 23, 0.98);
+    box-shadow: 0 18px 34px rgba(2, 8, 23, 0.3);
+  }
+
+  .upload-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .assignment-file-input {
+    padding: 0.8rem;
+    border-radius: 16px;
+    background: rgba(248, 250, 252, 0.95);
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+    color: #334155;
+  }
+
+  body.dark .assignment-file-input {
+    background: rgba(30, 41, 59, 0.95);
+    color: #e2e8f0;
+  }
+
+  .assignment-file-input::-webkit-file-upload-button {
+    margin-right: 1rem;
+    border: none;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .assignment-file-input::file-selector-button {
+    margin-right: 1rem;
+    border: none;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .drop-zone {
+    border: 2px dashed rgba(59, 130, 246, 0.35);
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.9), rgba(248, 250, 252, 0.98));
+    padding: 1rem;
+  }
+
+  body.dark .drop-zone {
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.92));
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+
+  .drop-zone.is-dragover {
+    border-color: #2563eb;
+    background: linear-gradient(180deg, rgba(219, 234, 254, 0.95), rgba(239, 246, 255, 1));
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  }
+
+  body.dark .drop-zone.is-dragover {
+    background: linear-gradient(180deg, rgba(30, 64, 175, 0.18), rgba(15, 23, 42, 0.96));
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+  }
+
+  .drop-zone-hint {
+    margin-top: 0.75rem;
+    text-align: center;
+    color: #475569;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  body.dark .drop-zone-hint {
+    color: #cbd5e1;
+  }
+
+  .drop-zone-hint strong {
+    color: #1d4ed8;
+  }
+
+  body.dark .drop-zone-hint strong {
+    color: #93c5fd;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4a6cf7, #2b4eff);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .submit-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .submission-status {
+    min-height: 42px;
+    padding: 0.8rem 0.95rem;
+    border-radius: 14px;
+    background: rgba(248, 250, 252, 0.82);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    text-align: left !important;
+  }
+
+  body.dark .submission-status {
+    background: rgba(15, 23, 42, 0.56);
+    border-color: rgba(96, 165, 250, 0.12);
+    color: #dbeafe;
+  }
+
+  @media (max-width: 768px) {
+    main.container {
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+      padding-left: 0.35rem !important;
+      padding-right: 0.35rem !important;
+    }
+
+    main.container::before {
+      inset: 24px -24px auto auto;
+      width: 120px;
+      height: 120px;
+    }
+
+    .assignment-card {
+      padding: 1.4rem !important;
+      border-radius: 22px;
+    }
+
+    .assignment-container:hover {
+      transform: none;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+    }
+
+    .assignment-title {
+      font-size: 1.65rem;
+      line-height: 1.18;
+    }
+
+    .assignment-meta {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.7rem;
+      margin-bottom: 1.35rem;
+    }
+
+    .assignment-meta > span {
+      width: 100%;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .assignment-description-section,
+    .assignment-submit-section {
+      padding-top: 1.1rem;
+    }
+
+    .assignment-description {
+      min-height: 96px;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      line-height: 1.7;
+    }
+
+    .drop-zone {
+      padding: 0.85rem;
+      border-radius: 18px;
+    }
+
+    .assignment-file-input {
+      padding: 0.75rem;
+    }
+
+    .assignment-file-input::file-selector-button,
+    .assignment-file-input::-webkit-file-upload-button {
+      display: block;
+      width: 100%;
+      margin: 0 0 0.75rem 0;
+      text-align: center;
+    }
+
+    .drop-zone-hint {
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .submit-btn {
+      padding: 13px;
+      font-size: 15px;
+    }
+
+    .submission-status {
+      min-height: 38px;
+      padding: 0.75rem 0.85rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    main.container {
+      padding-left: 0.1rem !important;
+      padding-right: 0.1rem !important;
+    }
+
+    .assignment-card {
+      padding: 1.1rem !important;
+      border-radius: 18px;
+    }
+
+    .assignment-title {
+      font-size: 1.42rem;
+    }
+
+    .assignment-meta > span {
+      gap: 0.3rem;
+      font-size: 0.84rem;
+      border-radius: 16px;
+    }
+
+    .assignment-meta > span strong,
+    .assignment-meta > span span {
+      overflow-wrap: anywhere;
+    }
+
+    .section-heading {
+      font-size: 1.02rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .assignment-description {
+      min-height: 84px;
+      padding: 0.9rem;
+      border-radius: 16px;
+      font-size: 0.94rem;
+    }
+
+    .drop-zone {
+      padding: 0.75rem;
+      border-radius: 16px;
+    }
+
+    .upload-label,
+    .drop-zone-hint,
+    .submission-status {
+      font-size: 0.84rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="nav-brand">
+      <img src="assets/icon1.png" alt="logo">
+      <div class="brand-title">Student Dashboard</div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <button id="menu-toggle" aria-label="Open menu"><i class="bi bi-list"></i></button>
+      <nav>
+        <ul class="nav-items" id="topNav">
+          <li><button><a href="/student/dashboard">Home</a></button></li>
+          <li><button>Time Table</button></li>
+          <li><button>Exams</button></li>
+          <li><button>Password</button></li>
+          <li><button><a href="/login">Logout</a></button></li>
+        </ul>
+      </nav>
+      <button id="dark-btn" aria-pressed="false" title="Toggle dark mode"><i class="bi bi-moon-stars-fill"></i></button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <ul>
+      <li><a href="/student/dashboard"><i class="bi bi-house-fill"></i> Dashboard</a></li>
+      <li><a href="#"><i class="bi bi-person-fill"></i> Profile</a></li>
+      <li><a href="#"><i class="bi bi-list-check"></i> Attendance</a></li>
+      <li><a href="#"><i class="bi bi-journal-text"></i> Assignments</a></li>
+      <li><a href="#"><i class="bi bi-paste"></i> Exams</a></li>
+      <li><a href="#"><i class="bi bi-book"></i> Library</a></li>
+      <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
+      <li class="logout"><a href="/login"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+    </ul>
+  </aside>
+
+  <br>
+  <br>
+  <br>
+ 
+  <!-- Main Content -->
+  
+  <main class="container mx-auto my-8 px-4">
+
+    <!-- Hidden assignmentId and submission status -->
+    <input type="hidden" id="assignmentId" th:value="${assignmentId}" />
+    <input type="hidden" id="alreadySubmitted" th:value="${alreadySubmitted}" />
+
+    <!-- Assignment Card -->
+    <div class="assignment-card assignment-container bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 max-w-3xl mx-auto">
+
+      <!-- Title Section -->
+      <h2 id="assignment-title" class="assignment-title text-3xl font-bold text-gray-800 dark:text-white mb-2">
+        Assignment Title
+      </h2>
+      <div class="assignment-meta text-gray-600 dark:text-gray-300 text-sm mb-6 space-x-4">
+        <span>
+          <i class="bi bi-book-half"></i>
+          <strong>Subject:</strong> <span id="assignment-subject"></span>
+        </span>
+        <span>
+          <i class="bi bi-people-fill"></i>
+          <strong>Class & Section:</strong> <span id="assignment-class-section"></span>
+        </span>
+        <span>
+          <i class="bi bi-calendar-event-fill"></i>
+          <strong>Due Date:</strong> <span id="assignment-due-date"></span>
+        </span>
+      </div>
+
+      <!-- Description Section -->
+      <div class="assignment-description-section border-t border-gray-200 dark:border-gray-700 pt-4 mb-6">
+        <h5 class="section-heading text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Description</h5>
+        <p id="assignment-description" class="assignment-description text-gray-700 dark:text-gray-300 leading-relaxed"></p>
+      </div>
+
+      <!-- Submission Area -->
+      <div class="assignment-submit-section border-t border-gray-200 dark:border-gray-700 pt-4">
+        <h5 class="section-heading text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          Submit Your Assignment
+        </h5>
+
+        <div id="submission-area">
+          <form id="submit-assignment-form" class="space-y-4">
+            <div>
+              <label for="assignment-file" class="upload-label block text-gray-700 dark:text-gray-200 font-medium mb-2">
+                Upload File
+              </label>
+              <div id="drop-zone" class="drop-zone">
+                <input type="file" id="assignment-file" name="file" required
+                       class="assignment-file-input block w-full text-sm text-gray-700 dark:text-gray-300
+                              border border-gray-300 dark:border-gray-600 rounded-lg
+                              cursor-pointer focus:ring-blue-500 focus:border-blue-500
+                              dark:bg-gray-700 dark:placeholder-gray-400">
+                <p class="drop-zone-hint">Drag and drop your file here or <strong>browse</strong> to upload.</p>
+              </div>
+            </div>
+
+            <button type="submit"
+                    class="submit-btn w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-all">
+              Submit Assignment
+            </button>
+          </form>
+
+          <!-- Submission Status -->
+          <div id="submission-status" class="submission-status mt-4 text-sm text-center text-gray-700 dark:text-gray-300"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+	<script>
+		// Elements
+		const menuToggle = document.getElementById('menu-toggle');
+		const sidebar = document.getElementById('sidebar');
+		const topNav = document.getElementById('topNav');
+		const darkBtn = document.getElementById('dark-btn');
+
+		// ===== MOBILE SIDEBAR TOGGLE =====
+		menuToggle.addEventListener('click', (e) => {
+		  e.stopPropagation(); // prevent triggering document click
+		  // Only toggle sidebar on mobile
+		  if (window.innerWidth <= 768) {
+		    sidebar.classList.toggle('open');
+		  }
+		});
+
+		// ===== CLOSE SIDEBAR WHEN CLICKING OUTSIDE =====
+		document.addEventListener('click', (ev) => {
+		  if (window.innerWidth <= 768) {
+		    const target = ev.target;
+		    if (!sidebar.contains(target) && !menuToggle.contains(target)) {
+		      sidebar.classList.remove('open');
+		    }
+		  }
+		});
+
+		// ===== DARK MODE =====
+		darkBtn.addEventListener('click', () => {
+		  document.body.classList.toggle('dark');
+		  darkBtn.setAttribute('aria-pressed', document.body.classList.contains('dark') ? 'true' : 'false');
+		  keepLightCards(); // ensure timetable & exams cards stay light
+		});
+
+		// ===== CHARTS =====
+	
+
+		// ===== KEEP TIMETABLE & EXAMS LIGHT =====
+		function keepLightCards() {
+		  document.querySelectorAll('.timetable-card').forEach(c => {
+		    c.style.background = '#ffffe0';
+		    c.style.color = '#000';
+		  });
+		  document.querySelectorAll('.exams-card').forEach(card => {
+		    	    card.style.background = '#e6eef6';
+		    	    card.style.color = '#000';
+		    	  });
+		}
+		keepLightCards();
+		const observer = new MutationObserver(keepLightCards);
+		observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+		// ===== RESIZE HANDLER =====
+		window.addEventListener('resize', () => {
+		  if (window.innerWidth > 768) {
+		    sidebar.classList.remove('open');
+		  }
+		});
+
+    const assignmentFile = document.getElementById('assignment-file');
+    const dropZone = document.getElementById('drop-zone');
+
+    if (assignmentFile && dropZone) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          dropZone.classList.add('is-dragover');
+        });
+      });
+
+      ['dragleave', 'dragend', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          dropZone.classList.remove('is-dragover');
+        });
+      });
+
+      dropZone.addEventListener('drop', (event) => {
+        const files = event.dataTransfer && event.dataTransfer.files;
+        if (!files || !files.length) {
+          return;
+        }
+
+        const transfer = new DataTransfer();
+        Array.from(files).forEach((file) => transfer.items.add(file));
+        assignmentFile.files = transfer.files;
+        assignmentFile.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+
+		
+	</script>
+
+ 
+
+  <script src="/student/js/student-assignmentsubmit.js"></script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Student Attendance Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.0/dist/vanilla-tilt.min.js"></script>
+
+<script>
+tailwind.config={darkMode:"class"}
+</script>
+
+<style>
+
+/* ---------- GLOBAL ---------- */
+
+body{
+font-family:"Inter",sans-serif;
+background:#f8fafc;
+overflow-x:hidden;
+}
+
+.dark body{
+background:#020617;
+}
+
+/* PARTICLES */
+
+#particles-js{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-3;
+}
+
+/* BLOBS */
+
+.blob{
+position:fixed;
+width:420px;
+height:420px;
+border-radius:50%;
+filter:blur(120px);
+opacity:.35;
+animation:float 18s infinite alternate ease-in-out;
+z-index:-2;
+}
+
+.blob1{background:#6366f1;top:-150px;left:-100px;}
+.blob2{background:#06b6d4;bottom:-150px;right:-100px;}
+.blob3{background:#a855f7;top:40%;left:50%;}
+
+@keyframes float{
+from{transform:translateY(0)}
+to{transform:translateY(-80px)}
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+top:0;
+left:0;
+width:260px;
+height:100%;
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(16px);
+border-right:1px solid #e5e7eb;
+transition:.35s;
+z-index:50;
+}
+
+.dark .sidebar{
+background:rgba(15,23,42,.85);
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px 20px;
+font-weight:500;
+transition:.25s;
+box-shadow:0 8px 20px rgba(0,0,0,.15);
+border-radius:8px;
+margin:6px;
+}
+
+.sidebar a:hover{
+background:rgba(99,102,241,.1);
+transform:translateX(6px);
+box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+
+/* ATTENDANCE ACTIVE */
+
+.sidebar .active{
+background:linear-gradient(90deg,#6366f1,#06b6d4);
+color:white;
+border-radius:10px;
+margin:6px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.sidebar{transform:translateX(-100%)}
+
+.sidebar.active{transform:translateX(0)}
+
+.overlay{
+display:none;
+}
+
+.overlay.active{
+display:block;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.4);
+z-index:40;
+}
+
+}
+
+/* CONTENT */
+
+.content{margin-left:260px}
+
+@media(max-width:768px){
+.content{margin-left:0}
+}
+
+/* GLASS */
+
+.glass{
+background:rgba(255,255,255,.65);
+backdrop-filter:blur(18px);
+border-radius:18px;
+border:1px solid rgba(255,255,255,.3);
+transition:.3s;
+}
+
+.dark .glass{
+background:rgba(15,23,42,.75);
+}
+
+.glass:hover{
+transform:translateY(-8px);
+box-shadow:0 30px 50px rgba(0,0,0,.2);
+}
+
+/* GRADIENT TEXT */
+
+.gradient{
+font-family:"Poppins",sans-serif;
+font-weight:700;
+background:linear-gradient(90deg,#6366f1,#06b6d4,#a855f7);
+background-size:200%;
+-webkit-background-clip:text;
+color:transparent;
+animation:grad 6s linear infinite;
+}
+
+@keyframes grad{
+0%{background-position:0%}
+100%{background-position:200%}
+}
+
+/* BUTTON */
+
+.btn{
+padding:8px 16px;
+border-radius:10px;
+background:linear-gradient(45deg,#6366f1,#06b6d4);
+color:white;
+transition:.25s;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 25px rgba(99,102,241,.4);
+}
+
+/* PROGRESS RING */
+
+.progress-ring{
+width:120px;
+height:120px;
+margin:auto;
+}
+
+.progress-ring circle{
+fill:none;
+stroke-width:10;
+stroke-linecap:round;
+}
+
+.bg-ring{
+stroke:#e5e7eb;
+}
+
+.fg-ring{
+stroke:url(#grad1);
+stroke-dasharray:339;
+stroke-dashoffset:50;
+transition:stroke-dashoffset 1s;
+}
+
+/* TABLE */
+
+table{
+border-collapse:separate;
+border-spacing:0 8px;
+}
+
+tbody tr{
+background:white;
+transition:.2s;
+}
+
+.dark tbody tr{
+background:#0f172a;
+}
+
+tbody tr:hover{
+transform:scale(1.02);
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+}
+
+td,th{
+padding:12px;
+text-align:center;
+}
+
+.counter{
+font-size:32px;
+font-weight:700;
+font-family:"Poppins";
+}
+
+</style>
+
+</head>
+
+<body class="text-gray-800 dark:text-gray-200">
+
+<div id="particles-js"></div>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<div id="overlay" class="overlay"></div>
+
+<!-- SIDEBAR -->
+
+<aside id="sidebar" class="sidebar">
+
+<div class="p-5 font-bold text-xl gradient border-b">
+Student Panel
+</div>
+
+<a href="#"><i class="bi bi-house"></i>Dashboard</a>
+<a href="#"><i class="bi bi-person"></i>Profile</a>
+
+<a class="active"><i class="bi bi-check2-square"></i>Attendance</a>
+
+<a href="#"><i class="bi bi-journal-text"></i>Assignments</a>
+<a href="#"><i class="bi bi-file-earmark-text"></i>Exams</a>
+<a href="#"><i class="bi bi-credit-card"></i>Fees</a>
+<a href="#"><i class="bi bi-gear"></i>Settings</a>
+
+</aside>
+
+<div class="content">
+
+<header class="glass sticky top-0 z-30">
+
+<div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
+
+<button id="menuBtn" class="text-xl md:hidden">
+<i class="bi bi-list"></i>
+</button>
+
+<h1 class="text-xl gradient">
+Attendance Dashboard
+</h1>
+
+<div class="flex gap-3">
+
+<button id="downloadBtn" class="btn"><i class="bi bi-download"></i></button>
+<button id="darkBtn" class="btn"><i class="bi bi-moon"></i></button>
+
+</div>
+
+</div>
+
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+
+<!-- STATS -->
+
+<div class="grid md:grid-cols-3 gap-6">
+
+<div class="glass p-6 text-center" data-tilt>
+
+<h3>Total Classes</h3>
+<p class="counter" data-target="120">0</p>
+
+</div>
+
+<div class="glass p-6 text-center" data-tilt>
+
+<h3>Present</h3>
+<p class="counter text-green-500" data-target="102">0</p>
+
+</div>
+
+<div class="glass p-6 text-center">
+
+<h3>Attendance</h3>
+
+<svg class="progress-ring">
+
+<defs>
+<linearGradient id="grad1">
+<stop offset="0%" stop-color="#6366f1"/>
+<stop offset="100%" stop-color="#06b6d4"/>
+</linearGradient>
+</defs>
+
+<circle class="bg-ring" cx="60" cy="60" r="54"/>
+<circle class="fg-ring" cx="60" cy="60" r="54"/>
+
+</svg>
+
+<p class="counter mt-2">85%</p>
+
+</div>
+
+</div>
+
+<!-- CHART -->
+
+<div class="glass p-6">
+
+<h3 class="gradient text-xl mb-4">
+Attendance Trend
+</h3>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+<!-- DAILY ATTENDANCE -->
+
+<div class="glass p-6">
+
+<h3 class="gradient text-xl mb-4">
+Daily Attendance
+</h3>
+
+<div class="overflow-x-auto">
+
+<table class="w-full text-sm">
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Day</th>
+<th>Subject</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>12-03-2026</td>
+<td>Thursday</td>
+<td>Python</td>
+<td class="text-green-500 font-semibold">Present</td>
+</tr>
+
+<tr>
+<td>11-03-2026</td>
+<td>Wednesday</td>
+<td>DBMS</td>
+<td class="text-red-500 font-semibold">Absent</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+<script>
+
+/* SIDEBAR */
+
+menuBtn.onclick=()=>{
+sidebar.classList.toggle("active")
+overlay.classList.toggle("active")
+}
+
+overlay.onclick=()=>{
+sidebar.classList.remove("active")
+overlay.classList.remove("active")
+}
+
+/* DARK MODE */
+
+darkBtn.onclick=()=>{
+document.documentElement.classList.toggle("dark")
+}
+
+/* COUNTERS */
+
+document.querySelectorAll(".counter").forEach(counter=>{
+const update=()=>{
+const target=+counter.dataset.target||counter.innerText
+const count=+counter.innerText
+const inc=target/80
+
+if(count<target){
+counter.innerText=Math.ceil(count+inc)
+setTimeout(update,20)
+}
+}
+update()
+})
+
+/* PARTICLES */
+
+particlesJS("particles-js",{
+particles:{
+number:{value:80},
+size:{value:3},
+move:{speed:1},
+line_linked:{enable:true,opacity:.2},
+color:{value:"#6366f1"}
+}
+})
+
+/* CHART */
+
+new Chart(document.getElementById("chart"),{
+type:"line",
+data:{
+labels:["Mon","Tue","Wed","Thu","Fri"],
+datasets:[{
+data:[1,1,0,1,1],
+borderColor:"#6366f1",
+tension:.4
+}]
+},
+options:{
+plugins:{legend:{display:false}},
+scales:{y:{display:false}}
+}
+})
+
+/* TILT */
+
+VanillaTilt.init(document.querySelectorAll("[data-tilt]"),{
+max:10,
+speed:400
+})
+
+/* DOWNLOAD ATTENDANCE */
+
+document.getElementById("downloadBtn").onclick = function () {
+
+let table = document.querySelector("table");
+let rows = table.querySelectorAll("tr");
+
+let csv = [];
+
+rows.forEach(row=>{
+let cols = row.querySelectorAll("td, th");
+let rowData = [];
+
+cols.forEach(col=>{
+rowData.push(col.innerText);
+});
+
+csv.push(rowData.join(","));
+});
+
+let csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+
+let downloadLink = document.createElement("a");
+
+downloadLink.download = "attendance_sheet.csv";
+downloadLink.href = window.URL.createObjectURL(csvFile);
+downloadLink.style.display = "none";
+
+document.body.appendChild(downloadLink);
+
+downloadLink.click();
+};
+
+</script>
+
+</body>
+</html>
+

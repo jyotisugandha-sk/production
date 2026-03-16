@@ -1,0 +1,431 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student ERP Fees</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+
+<style>
+
+/* RESET */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:system-ui;
+}
+
+/* LIGHT MODE */
+
+body{
+background:#f5f8ff;
+color:#0f172a;
+overflow-x:hidden;
+}
+
+/* TRUE DARK MODE */
+
+body.dark{
+background:#000000;
+color:#ffffff;
+}
+
+/* BACKGROUND CANVAS */
+
+#bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* NAVBAR */
+
+header{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:60px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(16px);
+border-bottom:1px solid rgba(0,0,0,.1);
+z-index:1000;
+}
+
+body.dark header{
+background:rgba(0,0,0,.85);
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.brand{
+font-weight:600;
+display:flex;
+gap:8px;
+align-items:center;
+}
+
+.icon-btn{
+background:none;
+border:none;
+font-size:20px;
+cursor:pointer;
+margin-left:10px;
+color:inherit;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+position:fixed;
+top:60px;
+left:0;
+width:240px;
+height:100%;
+padding:15px;
+background:rgba(255,255,255,.7);
+backdrop-filter:blur(18px);
+border-right:1px solid rgba(0,0,0,.1);
+transition:.3s;
+}
+
+body.dark .sidebar{
+background:rgba(0,0,0,.85);
+border-right:1px solid rgba(255,255,255,.08);
+}
+
+.sidebar a{
+display:flex;
+align-items:center;
+gap:10px;
+padding:14px;
+margin-bottom:10px;
+border-radius:14px;
+text-decoration:none;
+color:inherit;
+background:rgba(255,255,255,.35);
+box-shadow:0 10px 20px rgba(0,0,0,.15);
+transition:.3s;
+}
+
+body.dark .sidebar a{
+background:rgba(255,255,255,.05);
+box-shadow:0 8px 20px rgba(0,0,0,.7);
+}
+
+.sidebar a:hover{
+transform:translateY(-4px);
+}
+
+.sidebar a.active{
+background:linear-gradient(90deg,#2563eb,#3b82f6);
+color:white;
+}
+
+/* MAIN */
+
+main{
+margin-left:240px;
+margin-top:80px;
+padding:30px;
+}
+
+/* STUDENT CARD */
+
+.student-card{
+background:rgba(255,255,255,.65);
+border:1px solid rgba(0,0,0,.1);
+padding:20px;
+border-radius:14px;
+margin-bottom:20px;
+}
+
+body.dark .student-card{
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.08);
+}
+
+/* CARDS */
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+margin-bottom:25px;
+}
+
+.card{
+padding:24px;
+border-radius:16px;
+color:white;
+font-weight:500;
+box-shadow:0 15px 30px rgba(0,0,0,.25);
+}
+
+.total{background:linear-gradient(135deg,#2563eb,#3b82f6);}
+.paid{background:linear-gradient(135deg,#16a34a,#22c55e);}
+.pending{background:linear-gradient(135deg,#ea580c,#f97316);}
+
+/* TABLE */
+
+.table-box{
+background:rgba(255,255,255,.65);
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 12px 20px rgba(0,0,0,.18);
+}
+
+body.dark .table-box{
+background:rgba(255,255,255,.05);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+text-align:center;
+}
+
+th{
+background:#2563eb;
+color:white;
+}
+
+tr:nth-child(even){
+background:rgba(255,255,255,.2);
+}
+
+body.dark tr:nth-child(even){
+background:rgba(255,255,255,.05);
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.sidebar{left:-240px;}
+
+.sidebar.active{left:0;}
+
+main{margin-left:0;}
+
+}
+/* DARK MODE TABLE TEXT FIX */
+
+body.dark table td{
+color:#ffffff;
+}
+
+body.dark table th{
+color:#ffffff;
+}
+
+body.dark table{
+color:#ffffff;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<header>
+
+<div class="brand">
+<i class="bi bi-mortarboard-fill"></i>
+Student fees
+</div>
+
+<div>
+<button class="icon-btn" id="menuBtn"><i class="bi bi-list"></i></button>
+<button class="icon-btn" id="darkBtn"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+</header>
+
+<aside class="sidebar" id="sidebar">
+
+<a href="#"><i class="bi bi-house"></i> Dashboard</a>
+<a href="#"><i class="bi bi-person"></i> Profile</a>
+<a href="#"><i class="bi bi-check2-square"></i> Attendance</a>
+<a href="#"><i class="bi bi-journal-text"></i> Assignments</a>
+<a href="#"><i class="bi bi-file-earmark"></i> Exams</a>
+<a class="active"><i class="bi bi-cash-stack"></i> Fees</a>
+<a href="#"><i class="bi bi-gear"></i> Settings</a>
+
+</aside>
+
+<main>
+
+<div class="student-card">
+
+<h2>Mustak Khan</h2>
+<p>Roll No : S123535</p>
+<p>Class : 2nd Year | Section C</p>
+
+</div>
+
+<div class="cards">
+
+<div class="card total">
+Total Fees
+<h2>₹50000</h2>
+</div>
+
+<div class="card paid">
+Paid Fees
+<h2>₹30000</h2>
+</div>
+
+<div class="card pending">
+Pending Fees
+<h2>₹20000</h2>
+</div>
+
+</div>
+
+<div class="table-box">
+
+<table>
+
+<thead>
+<tr>
+<th>Type</th>
+<th>Total Fee</th>
+<th>Paid Fee</th>
+<th>Pending Fee</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>Tuition</td>
+<td>20000</td>
+<td>15000</td>
+<td>5000</td>
+<td>Pending</td>
+</tr>
+
+<tr>
+<td>Exam</td>
+<td>5000</td>
+<td>5000</td>
+<td>0</td>
+<td>Paid</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</main>
+
+<script>
+
+/* SIDEBAR */
+
+menuBtn.onclick=()=>sidebar.classList.toggle("active")
+
+darkBtn.onclick=()=>{
+document.body.classList.toggle("dark")
+}
+
+/* COSMIC PARTICLES */
+
+const canvas=document.getElementById("bg")
+const ctx=canvas.getContext("2d")
+
+let w=canvas.width=window.innerWidth
+let h=canvas.height=window.innerHeight
+
+window.onresize=()=>{
+w=canvas.width=window.innerWidth
+h=canvas.height=window.innerHeight
+}
+
+const particles=[]
+
+for(let i=0;i<220;i++){
+
+particles.push({
+
+x:Math.random()*w,
+y:Math.random()*h,
+
+z:Math.random(),
+
+size:1+Math.random()*2,
+
+speed:0.2+Math.random()*0.6
+
+})
+
+}
+
+function draw(p){
+
+const scale=.5+p.z
+const radius=p.size*scale
+
+const g=ctx.createRadialGradient(
+p.x,p.y,0,
+p.x,p.y,radius*6
+)
+
+g.addColorStop(0,"rgba(255,255,255,1)")
+g.addColorStop(.4,"rgba(120,220,255,.9)")
+g.addColorStop(1,"rgba(120,220,255,0)")
+
+ctx.beginPath()
+ctx.fillStyle=g
+ctx.arc(p.x,p.y,radius*6,0,Math.PI*2)
+ctx.fill()
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,w,h)
+
+particles.forEach(p=>{
+
+p.y+=p.speed*(1+p.z)
+
+if(p.y>h){
+p.y=-10
+p.x=Math.random()*w
+}
+
+draw(p)
+
+})
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+</script>
+
+</body>
+</html>
+```
